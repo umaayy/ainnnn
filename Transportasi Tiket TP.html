@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem Pemesanan Tiket Transportasi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      min-height: 100vh;
+    }
+    header {
+      padding: 30px;
+      text-align: center;
+      color: white;
+    }
+
+    .container { max-width: 1100px; margin: auto; padding: 20px; }
+
+    .card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      display: none;
+    }
+
+    .card.active { display: block; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .transport {
+      background: #f3f3f3;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: .3s;
+    }
+    .transport:hover { transform: translateY(-5px); }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; }
+    th { background: #667eea; color: white; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: white;
+      opacity: .8;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🚆✈️ Sistem Pemesanan Tiket</h1>
+  <p>Pesawat • Kereta • Bus • Kapal</p>
+</header>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div class="card active" id="loginCard">
+    <h2>Login Pengguna</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- TRANSPORT -->
+  <div class="card" id="transportCard">
+    <h2>Pilih Transportasi</h2>
+    <div class="grid">
+      <div class="transport" onclick="pilihTransport('Pesawat')">✈️ Pesawat</div>
+      <div class="transport" onclick="pilihTransport('Kereta')">🚆 Kereta</div>
+      <div class="transport" onclick="pilihTransport('Bus')">🚌 Bus</div>
+      <div class="transport" onclick="pilihTransport('Kapal')">🚢 Kapal</div>
+    </div>
+  </div>
+
+  <!-- FORM PESAN -->
+  <div class="card" id="formCard">
+    <h2>Form Pemesanan</h2>
+    <input type="text" id="nama" placeholder="Nama Pemesan">
+    <select id="tujuan">
+      <option value="">Pilih Tujuan</option>
+    </select>
+    <input type="number" id="jumlah" placeholder="Jumlah Tiket">
+    <button onclick="pesan()">Proses Pemesanan</button>
+  </div>
+
+  <!-- RIWAYAT -->
+  <div class="card" id="riwayatCard">
+    <h2>Riwayat Pemesanan</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>Transportasi</th>
+          <th>Tujuan</th>
+          <th>Tiket</th>
+        </tr>
+      </thead>
+      <tbody id="riwayat"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Sistem Pemesanan Tiket
+</footer>
+
+<script>
+  let transportDipilih = "";
+
+  const tujuanTransport = {
+    Pesawat: [
+      "Jakarta - Bali",
+      "Jakarta - Makassar",
+      "Surabaya - Medan"
+    ],
+    Kereta: [
+      "Bandung - Yogyakarta",
+      "Jakarta - Cirebon",
+      "Solo - Surabaya"
+    ],
+    Bus: [
+      "Semarang - Solo",
+      "Yogyakarta - Purwokerto",
+      "Tegal - Pekalongan"
+    ],
+    Kapal: [
+      "Makassar - Balikpapan",
+      "Surabaya - Lombok",
+      "Ambon - Ternate"
+    ]
+  };
+
+  function login() {
+    if (username.value === "" || password.value === "") {
+      alert("Username dan password wajib diisi!");
+      return;
+    }
+    loginCard.classList.remove("active");
+    transportCard.classList.add("active");
+  }
+
+  function pilihTransport(jenis) {
+    transportDipilih = jenis;
+    formCard.classList.add("active");
+
+    // Reset tujuan
+    tujuan.innerHTML = `<option value="">Pilih Tujuan</option>`;
+
+    tujuanTransport[jenis].forEach(t => {
+      const option = document.createElement("option");
+      option.textContent = t;
+      tujuan.appendChild(option);
+    });
+  }
+
+  function pesan() {
+    if (nama.value === "" || tujuan.value === "" || jumlah.value === "") {
+      alert("Lengkapi data pemesanan!");
+      return;
+    }
+
+    riwayat.innerHTML += `
+      <tr>
+        <td>${nama.value}</td>
+        <td>${transportDipilih}</td>
+        <td>${tujuan.value}</td>
+        <td>${jumlah.value}</td>
+      </tr>
+    `;
+
+    riwayatCard.classList.add("active");
+    alert("Pemesanan berhasil!");
+  }
+</script>
+
+</body>
+</html>
